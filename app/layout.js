@@ -1,12 +1,14 @@
 export const metadata = {
   title: "Chatbot Test",
-  description: "Test Chatbot avec Next.js",
+  description: "Test Chatbot avec Next.js et OpenAI",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        {children}
+      </body>
     </html>
   );
 }
