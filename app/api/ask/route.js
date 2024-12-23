@@ -1,5 +1,11 @@
 import { NextResponse } from 'next/server';
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
+
 export async function POST(req) {
   try {
     const { question } = await req.json();
@@ -18,23 +24,30 @@ export async function POST(req) {
 
     const data = await response.json();
     if (data.error) {
-      return NextResponse.json({ error: data.error.message }, { status: 500 });
+      return NextResponse.json(
+        { error: data.error.message },
+        { status: 500, headers: corsHeaders }
+      );
     }
 
     const botAnswer = data.choices?.[0]?.message?.content || 'Pas de réponse.';
-    return NextResponse.json({ answer: botAnswer });
+    return NextResponse.json({ answer: botAnswer }, { headers: corsHeaders });
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ error: 'Erreur côté serveur.' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Erreur côté serveur.' },
+      { status: 500, headers: corsHeaders }
+    );
   }
 }
 
 export async function OPTIONS() {
-  return new NextResponse(null, {
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    },
-  });
+  return NextResponse.json(null, { headers: corsHeaders });
+}
+
+export async function GET() {
+  return NextResponse.json(
+    { message: 'Utilisez la méthode POST pour poser des questions.' },
+    { headers: corsHeaders }
+  );
 }
